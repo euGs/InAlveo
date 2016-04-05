@@ -10,40 +10,32 @@ void ofApp::setup(){
     float desiredDistance = 400.f;
     
     cam.setPosition(0.f, 0.f, desiredDistance);
+    cam.setNearClip(0.1f);
     sound.setup("BabyBeats.wav");
     birthCanalModel.loadModel("BirthCanal.3ds");
-    
-    progress = 0.f;
+    birthCanalModel.setPosition(0, 0, 0);
+ 
+    progress = 25.f;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    cam.setPosition(0.f, 0.f, ofGetMouseX());
+    cam.setPosition(0.f, 0.f, progress);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(255.f, 255.f, 255.f);
-    
-    float xFactor, yFactor;
-    
-    xFactor = 1.f;
-    xFactor += (progress <  .25f) ? ofMap(progress, 0.f, 0.25f, 1.f, 0.f) : 0.f ;
-    yFactor = 1.f;
-    yFactor += (progress > .75f) ? ofMap(progress, .75f, 1.f, 0.f, 1.f) : 0.f;
+    ofBackground(255.f, 200.f, 200.f);
     
     cam.begin();
-    ofSetColor(100.f, 0.f, 0.f);
-    //    ofDrawEllipse(0.f, 0.f, 300.f * xFactor, 300.f * yFactor);
-    //    ofDrawCylinder(0.f, 0.f, 0.f, 100, 100);
-    birthCanalModel.setPosition(0, 0, 0);
+    ofSetColor(100.f, 0.f, 0.f, 100.f);
     birthCanalModel.drawFaces();
     cam.end();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    progress += .05f;
+    progress -= 1.f;
 }
 
 //--------------------------------------------------------------
