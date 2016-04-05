@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# XCode / openFrameworks
+*.xcodeproj/
+Project.xcconfig
+bin/
+openFrameworks-Info.plist
