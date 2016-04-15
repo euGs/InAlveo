@@ -21,6 +21,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     rhythms.update();
+    
     progress -= rhythms.getRhythmLevel() * speedScaling;
     cam.setPosition(0.f, 0.f, progress);
 }

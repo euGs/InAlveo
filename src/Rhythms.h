@@ -22,7 +22,7 @@ protected:
     const float PadSmoothing = .9f;
     
     ofArduino arduino;
-    Trigger pad0;
+    Trigger pad0, pad1;
     
     void setupArduino(const int & version);
     void calcRhythms();
