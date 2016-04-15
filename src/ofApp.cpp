@@ -7,25 +7,27 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    float desiredDistance = 400.f;
-    
-    cam.setPosition(0.f, 0.f, desiredDistance);
+    cam.setPosition(0.f, 0.f, camDistance);
     cam.setNearClip(0.1f);
     sound.setup("BabyBeats.wav");
     birthCanalModel.loadModel("BirthCanal.3ds");
     birthCanalModel.setPosition(0, 0, 0);
+    rhythms.setup("/dev/cu.usbmodemfd121", 57600);
  
-    progress = 25.f;
+    progress = 0.f;
+    speed = 0.f;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    rhythms.update();
+    progress -= rhythms.getRhythmLevel() * speedScaling;
     cam.setPosition(0.f, 0.f, progress);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(255.f, 200.f, 200.f);
+    ofBackground(255.f);
     
     cam.begin();
     ofSetColor(100.f, 0.f, 0.f, 100.f);
@@ -35,7 +37,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    progress -= 1.f;
+
 }
 
 //--------------------------------------------------------------

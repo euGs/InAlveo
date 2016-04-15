@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "Sound.h"
+#include "Rhythms.h"
 #include "ofxAssimpModelLoader.h"
 
 class ofApp : public ofBaseApp{
@@ -24,8 +25,12 @@ public:
     void gotMessage(ofMessage msg);
     
 protected:
+    const float camDistance = 400.f;
+    const float speedScaling = .01f;
+
     ofEasyCam cam;
     Sound sound;
-    float progress;
+    Rhythms rhythms;
+    float progress, speed;
     ofxAssimpModelLoader birthCanalModel;
 };
