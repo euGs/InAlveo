@@ -7,14 +7,19 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    cam.setPosition(0.f, 0.f, camDistance);
     cam.setNearClip(0.1f);
     sound.setup("BabyBeats.wav");
     birthCanalModel.loadModel("BirthCanal.3ds");
-    birthCanalModel.setPosition(0, 0, 0);
+    birthCanalModel.setPosition(0.f, 0.f, 0.f);
+    birthCanalModel.setScale(100.f, 100.f, 100.f);
     rhythms.setup("/dev/cu.usbmodemfd121", 57600);
+    
+    visualisationSource.setImageFilename("SoftCircle.png");
+    visualisationSource.setup();
+    agentSource.setup();
+    agents.setup(agentSource, visualisationSource, MaxAgents);
  
-    progress = 0.f;
+    progress = 300.f;
     speed = 0.f;
 }
 
@@ -22,7 +27,9 @@ void ofApp::setup(){
 void ofApp::update(){
     rhythms.update();
     
-    progress -= rhythms.getRhythmLevel() * speedScaling;
+    progress -= rhythms.getRhythmLevel() * SpeedScaling;
+    agents.update(static_cast<float>(ofGetMouseX())/800);
+
     cam.setPosition(0.f, 0.f, progress);
 }
 
@@ -31,9 +38,18 @@ void ofApp::draw(){
     ofBackground(255.f);
     
     cam.begin();
+    ofPushStyle();
     ofSetColor(100.f, 0.f, 0.f, 100.f);
     birthCanalModel.drawFaces();
+    ofPopStyle();
+    agents.draw();
     cam.end();
+    
+    ofPushStyle();
+    ofSetColor(0, 0, 0);
+    ofDrawBitmapString(ofGetFrameRate(), 20, 20);
+    ofDrawBitmapString(ofGetMouseX(), 20, 40);
+    ofPopStyle();
 }
 
 //--------------------------------------------------------------

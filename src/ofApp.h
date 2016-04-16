@@ -1,9 +1,12 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxAssimpModelLoader.h"
 #include "Sound.h"
 #include "Rhythms.h"
-#include "ofxAssimpModelLoader.h"
+#include "Agents.h"
+#include "AgentSource.h"
+#include "VisualisationSource.h"
 
 class ofApp : public ofBaseApp{
     
@@ -25,12 +28,16 @@ public:
     void gotMessage(ofMessage msg);
     
 protected:
-    const float camDistance = 400.f;
-    const float speedScaling = .01f;
+    const float SpeedScaling = 5.f;
+    const int MaxAgents = 100;
+    const float BirthCanalZ = 645;
 
     ofEasyCam cam;
     Sound sound;
     Rhythms rhythms;
     float progress, speed;
     ofxAssimpModelLoader birthCanalModel;
+    Agents agents;
+    SphereRovingAgentSource agentSource;
+    CrumpledPaperVisualisationSource visualisationSource;
 };
