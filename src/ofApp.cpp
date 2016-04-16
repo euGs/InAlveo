@@ -15,6 +15,7 @@ void ofApp::setup(){
     rhythms.setup("/dev/cu.usbmodemfd121", 57600);
     
     visualisationSource.setImageFilename("SoftCircle.png");
+    visualisationSource.setPlaneResolution(4);
     visualisationSource.setup();
     agentSource.setup();
     agents.setup(agentSource, visualisationSource, MaxAgents);
@@ -28,7 +29,7 @@ void ofApp::update(){
     rhythms.update();
     
     progress -= rhythms.getRhythmLevel() * SpeedScaling;
-    agents.update(static_cast<float>(ofGetMouseX())/800);
+    agents.update(AgentsRadiusScaling);
 
     cam.setPosition(0.f, 0.f, progress);
 }
@@ -44,6 +45,11 @@ void ofApp::draw(){
     ofPopStyle();
     agents.draw();
     cam.end();
+    
+    ofPushStyle();
+    ofSetColor(255.f, rhythms.getRhythmLevel() * VisualFeedbackScaling);
+    ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+    ofPopStyle();
     
     ofPushStyle();
     ofSetColor(0, 0, 0);

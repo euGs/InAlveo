@@ -17,6 +17,10 @@ public:
         this->imageFilename = imageFilename;
     }
     
+    void setPlaneResolution(int planeResolution){
+        this->planeResolution = planeResolution;
+    }
+    
     virtual void setup(){
         if (imageFilename.empty()){
             ofLogWarning() << "SpriteVisualisationSource::setup()"
@@ -26,8 +30,6 @@ public:
         }
         
         image.load(imageFilename);
-        
-        planeResolution = 4;
     }
     
     virtual unique_ptr<Visualisation> getVisualisation() override{

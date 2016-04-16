@@ -29,8 +29,10 @@ public:
     
 protected:
     const float SpeedScaling = 5.f;
+    const float VisualFeedbackScaling = 255.f;   // For flashing the screen when pad is hit.
     const int MaxAgents = 100;
     const float BirthCanalZ = 645;
+    const float AgentsRadiusScaling = .8f;  // The radius of the area occupied by agents.
 
     ofEasyCam cam;
     Sound sound;
