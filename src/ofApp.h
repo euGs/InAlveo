@@ -30,15 +30,21 @@ public:
 protected:
     const float SpeedScaling = 5.f;
     const float VisualFeedbackScaling = 255.f;   // For flashing the screen when pad is hit.
-    const int MaxAgents = 100;
+    const int MaxAgents = 200;
     const float BirthCanalZ = 645;
-    const float AgentsRadiusScaling = .8f;  // The radius of the area occupied by agents.
+    const float AgentsRadiusScaling = 1.7f;  // The radius of the sphere occupied by agents.
 
     ofEasyCam cam;
+    
     Sound sound;
     Rhythms rhythms;
     float progress, speed;
-    ofxAssimpModelLoader birthCanalModel;
+
+    ofImage wombImage;
+    ofImage birthCanalImage;
+    ofPlanePrimitive wombSurface;
+    ofCylinderPrimitive birthCanal;
+    
     Agents agents;
     SphereRovingAgentSource agentSource;
     CrumpledPaperVisualisationSource visualisationSource;

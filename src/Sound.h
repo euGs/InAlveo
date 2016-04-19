@@ -7,9 +7,12 @@ public:
     void setup(string musicFile){
         soundPlayer.load(musicFile);
         soundPlayer.setLoop(true);
-        soundPlayer.play();
         level = 0.f;
         smoothing = .95f;
+    }
+    
+    void play(){
+        soundPlayer.play();
     }
     
     void update(){

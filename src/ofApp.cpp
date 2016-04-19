@@ -8,29 +8,43 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     cam.setNearClip(0.1f);
+    ofEnableDepthTest();
+    
     sound.setup("BabyBeats.wav");
-    birthCanalModel.loadModel("BirthCanal.3ds");
-    birthCanalModel.setPosition(0.f, 0.f, 0.f);
-    birthCanalModel.setScale(100.f, 100.f, 100.f);
     rhythms.setup("/dev/cu.usbmodemfd121", 57600);
+
+    wombImage.load("womb.png");
+    wombSurface.set(wombImage.getWidth(), wombImage.getHeight());
+    wombSurface.setOrientation({180.f, 0.f, 0.f});
+    wombSurface.mapTexCoordsFromTexture(wombImage.getTexture());
+    
+    birthCanalImage.load("birthCanal.png");
+    birthCanal.set(250, 1000);
+    birthCanal.setPosition(0, 0, -501);
+    birthCanal.setOrientation({90.f, 0.f, 0.f});
+    birthCanal.setResolutionRadius(50);
+    birthCanal.mapTexCoordsFromTexture(birthCanalImage.getTexture());
     
     visualisationSource.setImageFilename("SoftCircle.png");
     visualisationSource.setPlaneResolution(4);
     visualisationSource.setup();
     agentSource.setup();
     agents.setup(agentSource, visualisationSource, MaxAgents);
- 
+    
     progress = 300.f;
     speed = 0.f;
+    
+    sound.play();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     rhythms.update();
+    birthCanalImage.load("birthCanal.png");
     
     progress -= rhythms.getRhythmLevel() * SpeedScaling;
     agents.update(AgentsRadiusScaling);
-
+    
     cam.setPosition(0.f, 0.f, progress);
 }
 
@@ -39,11 +53,16 @@ void ofApp::draw(){
     ofBackground(255.f);
     
     cam.begin();
+    birthCanalImage.getTexture().bind();
+    birthCanal.draw();
+    birthCanalImage.getTexture().unbind();
+    wombImage.getTexture().bind();
+    wombSurface.drawFaces();
+    wombImage.getTexture().unbind();
     ofPushStyle();
-    ofSetColor(100.f, 0.f, 0.f, 100.f);
-    birthCanalModel.drawFaces();
-    ofPopStyle();
+    ofSetColor(255.f, 255.f, 200.f, 150.f);
     agents.draw();
+    ofPopStyle();
     cam.end();
     
     ofPushStyle();
