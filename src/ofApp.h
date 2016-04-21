@@ -14,6 +14,7 @@ class ofApp : public ofBaseApp{
     
 public:
     void setup();
+    shared_ptr<InputDevice> setupInput();
     void update();
     void draw();
     void audioIn(float * input, int bufferSize, int nChannels);
@@ -42,11 +43,14 @@ protected:
     const float HitHoldSeconds = .2f;
     const float AudioMaxInput = 1.f;
 
+    enum class InputType { Arduino, Audio };
+    
     ofCamera cam;
     ofSoundPlayer babyBeats, mamaBeats, underwater;
     ofSoundStream soundStream;
     shared_ptr<AudioInput> audioInput;
     shared_ptr<ArduinoInput> arduinoInput;
+    InputType inputType;
     
     Sound sound;
     Rhythms rhythms;

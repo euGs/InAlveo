@@ -14,14 +14,11 @@ void ofApp::setup(){
     mamaBeats.load("MamaBeats.wav");
     underwater.load("Underwater.wav");
     underwater.setLoop(true);
-    audioInput = make_shared<AudioInput>();
-    audioInput->setup(AudioMaxInput);
-    soundStream.setup(this, 0, 2, 44100, 256, 4);
     
-    arduinoInput = make_shared<ArduinoInput>();
-    arduinoInput->setup(1023.f, "/dev/tty.usbmodemfa131", 57600);
+    inputType = InputType::Arduino;
+    shared_ptr<InputDevice> input = setupInput();
 
-    rhythms.setup(arduinoInput, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
+    rhythms.setup(input, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
 
     wombImage.load("womb.png");
     wombSurface.set(wombImage.getWidth(), wombImage.getHeight());
@@ -46,6 +43,20 @@ void ofApp::setup(){
     
     babyBeats.play();
     underwater.play();
+}
+
+//--------------------------------------------------------------
+shared_ptr<InputDevice> ofApp::setupInput(){
+    if (inputType == InputType::Arduino){
+        arduinoInput = make_shared<ArduinoInput>();
+        arduinoInput->setup(1023.f, "/dev/tty.usbmodemfa131", 57600);
+        return arduinoInput;
+    } else if (inputType == InputType::Audio){
+        soundStream.setup(this, 0, 2, 44100, 256, 4);
+        audioInput = make_shared<AudioInput>();
+        audioInput->setup(AudioMaxInput);
+        return audioInput;
+    }
 }
 
 //--------------------------------------------------------------
@@ -97,7 +108,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::audioIn(float * input, int bufferSize, int nChannels){
-    audioInput->audioIn(input, bufferSize, nChannels);
+    if (inputType == InputType::Audio){
+        audioInput->audioIn(input, bufferSize, nChannels);
+    }
 }
 
 //--------------------------------------------------------------
