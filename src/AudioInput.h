@@ -25,6 +25,10 @@ public:
         return rawInput / MaxInput;
     }
     
+    virtual bool isReady() override{
+        return true;
+    }
+    
     void audioIn(float * input, int bufferSize, int nChannels){
         if (bufferSize == 0){
             rawInput = 0.f;

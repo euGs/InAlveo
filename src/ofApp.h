@@ -42,14 +42,18 @@ protected:
     const float HitThreshold = .08f;
     const float HitHoldSeconds = .2f;
     const float AudioMaxInput = 1.f;
+    const float BornZ = -800.f;
 
     enum class InputType { Arduino, Audio };
+    enum class State { InLimbo, InUtero, InAlveo, InAere };
     
+    State state;
     ofEasyCam cam;
-    ofSoundPlayer babyBeats, mamaBeats, underwater;
+    ofSoundPlayer babyBeats, mamaBeats, underwater, firstSounds;
     ofSoundStream soundStream;
     shared_ptr<AudioInput> audioInput;
     shared_ptr<ArduinoInput> arduinoInput;
+    shared_ptr<InputDevice> input;
     InputType inputType;
     
     Sound sound;

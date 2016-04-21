@@ -14,6 +14,7 @@
 class ArduinoInput : public InputDevice {
 public:
     void setup(float MaxInput, string device, int baud){
+        ready = false;
         InputDevice::setup(MaxInput);
         arduino.connect(device, baud);
         ofAddListener(arduino.EInitialized, this, &ArduinoInput::setupArduino);
@@ -30,13 +31,19 @@ public:
         
         return arduino.getAnalog(channel) / MaxInput;
     }
+    
+    virtual bool isReady() override{
+        return ready;
+    }
 
 protected:
     ofArduino arduino;
+    bool ready;
 
     void setupArduino(const int & version){
         ofRemoveListener(arduino.EInitialized, this, &ArduinoInput::setupArduino);
         arduino.sendAnalogPinReporting(0, ARD_ANALOG);
         arduino.sendAnalogPinReporting(1, ARD_ANALOG);
+        ready = true;
     }
 };

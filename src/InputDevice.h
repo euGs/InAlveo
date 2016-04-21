@@ -17,6 +17,8 @@ public:
     virtual void update(){
     }
     
+    virtual bool isReady() = 0;
+    
     virtual float getNormalisedRawInput(float channel) = 0;
     
 protected:

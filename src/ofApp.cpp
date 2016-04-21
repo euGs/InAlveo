@@ -14,9 +14,10 @@ void ofApp::setup(){
     mamaBeats.load("MamaBeats.wav");
     underwater.load("Underwater.wav");
     underwater.setLoop(true);
+    firstSounds.load("FirstSounds.wav");
     
-    inputType = InputType::Audio;
-    shared_ptr<InputDevice> input = setupInput();
+    inputType = InputType::Arduino;
+    input = setupInput();
 
     rhythms.setup(input, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
 
@@ -50,6 +51,8 @@ void ofApp::setup(){
     
     babyBeats.play();
     underwater.play();
+    
+    state = State::InLimbo;
 }
 
 //--------------------------------------------------------------
@@ -68,17 +71,31 @@ shared_ptr<InputDevice> ofApp::setupInput(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    rhythms.update(ofGetElapsedTimef());
-    birthCanalImage.load("birthCanal.png");
-    
-    progress -= rhythms.getRhythmLevel() * SpeedScaling;
-    if (rhythms.wasHit()){
-        mamaBeats.play();
+    if (state == State::InLimbo){
+        if (input->isReady()){
+            state = State::InUtero;
+        }
+    } else if (state == State::InUtero) {
+        if (progress < 0.f){
+            state = State::InAlveo;
+        }
+        progress -= rhythms.getRhythmLevel() * SpeedScaling;
+    } else if (state == State::InAlveo){
+        progress -= rhythms.getRhythmLevel() * SpeedScaling;
+        if (progress < -800.f){
+            state = State::InAere;
+        }
     }
+
+    rhythms.update(ofGetElapsedTimef());
     agents.update(AgentsRadiusScaling);
     vaginaAgents.update(AgentsRadiusScaling);
     
     cam.setPosition(0.f, 0.f, progress);
+    
+    if (rhythms.wasHit()){
+        mamaBeats.play();
+    }
 }
 
 //--------------------------------------------------------------
@@ -95,6 +112,7 @@ void ofApp::draw(){
     wombSurface.drawFaces();
     wombImage.getTexture().unbind();
     ofSetColor(255.f, 255.f, 200.f, 150.f);
+    
     if (progress > 0.f){
         agents.draw();
     }
@@ -108,14 +126,21 @@ void ofApp::draw(){
     ofSetColor(255.f, rhythms.getRhythmLevel() * VisualFeedbackScaling);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
-    if (rhythms.wasHit()){
-        mamaBeats.play();
-    }
-    
     ofSetColor(0, 0, 0);
     ofDrawBitmapString(ofGetFrameRate(), 20, 20);
     ofDrawBitmapString(rhythms.getRhythmLevel(), 20, 40);
-    ofDrawBitmapString(sin(ofGetElapsedTimef()*10), 20, 60);
+    ofDrawBitmapString(progress, 20, 60);
+    string text;
+    if (state == State::InLimbo){
+        text = "In Limbo";
+    } else if (state == State::InUtero){
+        text = "In Utero";
+    } else if (state == State::InAlveo){
+        text = "In Alveo";
+    } else if (state == State::InAere){
+        text = "In Aere";
+    }
+    ofDrawBitmapString(text, 20, 80);
     ofPopStyle();
 }
 
@@ -128,7 +153,7 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    progress -= 20;
 }
 
 //--------------------------------------------------------------
