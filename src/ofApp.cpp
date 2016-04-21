@@ -1,6 +1,5 @@
 #include "ofApp.h"
 
-
 /*
  Canal "beats" with the heart beat
  */
@@ -10,8 +9,19 @@ void ofApp::setup(){
     cam.setNearClip(0.1f);
     ofEnableDepthTest();
     
-    sound.setup("BabyBeats.wav");
-    rhythms.setup("/dev/cu.usbmodemfd121", 57600);
+    babyBeats.load("BabyBeats.wav");
+    babyBeats.setLoop(true);
+    mamaBeats.load("MamaBeats.wav");
+    underwater.load("Underwater.wav");
+    underwater.setLoop(true);
+    audioInput = make_shared<AudioInput>();
+    audioInput->setup(AudioMaxInput);
+    soundStream.setup(this, 0, 2, 44100, 256, 4);
+    
+    arduinoInput = make_shared<ArduinoInput>();
+    arduinoInput->setup(1023.f, "/dev/tty.usbmodemfa131", 57600);
+
+    rhythms.setup(arduinoInput, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
 
     wombImage.load("womb.png");
     wombSurface.set(wombImage.getWidth(), wombImage.getHeight());
@@ -20,8 +30,8 @@ void ofApp::setup(){
     
     birthCanalImage.load("birthCanal.png");
     birthCanal.set(250, 1000);
-    birthCanal.setPosition(0, 0, -501);
-    birthCanal.setOrientation({90.f, 0.f, 0.f});
+    birthCanal.setPosition(0, 0, BirthCanalZ);
+    birthCanal.setOrientation({90.f, 0.f, 2.5f});
     birthCanal.setResolutionRadius(50);
     birthCanal.mapTexCoordsFromTexture(birthCanalImage.getTexture());
     
@@ -31,18 +41,22 @@ void ofApp::setup(){
     agentSource.setup();
     agents.setup(agentSource, visualisationSource, MaxAgents);
     
-    progress = 300.f;
+    progress = 600.f;
     speed = 0.f;
     
-    sound.play();
+    babyBeats.play();
+    underwater.play();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    rhythms.update();
+    rhythms.update(ofGetElapsedTimef());
     birthCanalImage.load("birthCanal.png");
     
     progress -= rhythms.getRhythmLevel() * SpeedScaling;
+    if (rhythms.wasHit()){
+        mamaBeats.play();
+    }
     agents.update(AgentsRadiusScaling);
     
     cam.setPosition(0.f, 0.f, progress);
@@ -70,16 +84,25 @@ void ofApp::draw(){
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     ofPopStyle();
     
+    if (rhythms.wasHit()){
+        mamaBeats.play();
+    }
+    
     ofPushStyle();
     ofSetColor(0, 0, 0);
     ofDrawBitmapString(ofGetFrameRate(), 20, 20);
-    ofDrawBitmapString(ofGetMouseX(), 20, 40);
+    ofDrawBitmapString(rhythms.getRhythmLevel(), 20, 40);
     ofPopStyle();
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::audioIn(float * input, int bufferSize, int nChannels){
+    audioInput->audioIn(input, bufferSize, nChannels);
+}
 
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+    mamaBeats.play();
 }
 
 //--------------------------------------------------------------

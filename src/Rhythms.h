@@ -8,22 +8,21 @@
 
 #pragma once
 
-#include "ofArduino.h"
-#include "Trigger.h"
+#include <memory>
+#include <vector>
+
+#include "InputDevice.h"
+#include "Pad.h"
 
 class Rhythms {
 public:
-    void setup(string device, int baud);
-    void update();
+    void setup(std::shared_ptr<InputDevice> input, int numPads, float padSmoothing, float hitThreshold, float hitHoldSeconds);
+    void update(float elapsedTime);
     float getRhythmLevel();
+    bool wasHit();
     
 protected:
-    const float MaxPadHit = 1023.f;
-    const float PadSmoothing = .9f;
-    
-    ofArduino arduino;
-    Trigger pad0, pad1;
-    
-    void setupArduino(const int & version);
-    void calcRhythms();
+    std::shared_ptr<InputDevice> input;
+    std::vector<Pad> pads;
+    float averageInput;
 };

@@ -8,39 +8,41 @@
 
 #include "Rhythms.h"
 
-void Rhythms::setup(string device, int baud){
-    arduino.connect(device, baud);
-    ofAddListener(arduino.EInitialized, this, &Rhythms::setupArduino);
-    
-    pad0.setup(PadSmoothing);
-    pad1.setup(PadSmoothing);
+void Rhythms::setup(std::shared_ptr<InputDevice> input, int numPads, float padSmoothing, float hitThreshold, float hitHoldSeconds){
+    this->input = input;
+    for (int i=0; i<numPads; ++i){
+        Pad pad;
+        pad.setup(padSmoothing, hitThreshold, hitHoldSeconds);
+        pads.emplace_back(pad);
+    }
 }
 
-void Rhythms::update(){
-    arduino.update();
-    calcRhythms();
-    pad0.update();
-    pad1.update();
+void Rhythms::update(float elapsedTime){
+    input->update();
+    
+    if (pads.size() == 0){
+        return 0.f;
+    }
+    
+    for (int i=0; i<pads.size(); i++){
+        pads[i].update(input->getNormalisedRawInput(i), elapsedTime);
+        averageInput += pads[i].getSmoothedValue();
+    }
+    
+    averageInput /= pads.size();
 }
 
 float Rhythms::getRhythmLevel(){
-    return (pad0.getSmoothedValue() + pad1.getSmoothedValue()) * .5f;
+    return averageInput;
 }
 
-void Rhythms::setupArduino(const int & version){
-    ofRemoveListener(arduino.EInitialized, this, &Rhythms::setupArduino);
-    arduino.sendAnalogPinReporting(0, ARD_ANALOG);
-    arduino.sendAnalogPinReporting(1, ARD_ANALOG);
-}
-
-void Rhythms::calcRhythms(){
-    float a0Normalised = arduino.getAnalog(0) / MaxPadHit;
-    float a1Normalised = arduino.getAnalog(1) / MaxPadHit;
+bool Rhythms::wasHit(){
+    bool hit = false;
     
-    if (a0Normalised > 0.f){
-        pad0.setRawValue(a0Normalised);
+    for (auto it : pads){
+        if (it.wasHit()){
+            hit = true;
+        }
     }
-    if (a1Normalised > 0.f){
-        pad1.setRawValue(a1Normalised);
-    }
+    return hit;
 }
