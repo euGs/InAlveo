@@ -43,12 +43,15 @@ protected:
     const float HitThreshold = .08f;
     const float HitHoldSeconds = .2f;
     const float AudioMaxInput = 1.f;
-    const float InUteroProgress = 600.f;
-    const float InAlveoProgress = 0.f;
-    const float InAereProgress = -800.f;
+    const float ProgressInUtero = 600.f;
+    const float ProgressInAlveo = 0.f;
+    const float ProgressInAere = -800.f;
+    const float ProgressFadeBirthCanal = -400.f;
+    const float FadeDurationSeconds = 2.f;
+    const float FirstSoundsDurationSeconds = 8.f;
 
     enum class InputType { Arduino, Audio };
-    enum class State { InLimbo, InUtero, InAlveo, InAere };
+    enum class State { InLimbo, LimboToUtero, InUtero, InAlveo, InAere };
     
     State state;
     ofEasyCam cam;
@@ -61,7 +64,8 @@ protected:
     
     Sound sound;
     Rhythms rhythms;
-    float progress, speed;
+    float progress;
+    float fadeFinished;
 
     ofImage wombImage;
     ofImage birthCanalImage;

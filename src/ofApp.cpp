@@ -46,9 +46,7 @@ void ofApp::setup(){
     vaginaAgentsSource.moveMesh({0.f, 0.f, -950.f});
     vaginaAgents.setup(vaginaAgentsSource, visualisationSource, MaxAgents);
     
-    progress = InUteroProgress;
-    speed = 0.f;
-    
+    progress = ProgressInUtero;
     babyBeats.play();
     underwater.play();
     
@@ -73,19 +71,37 @@ shared_ptr<InputDevice> ofApp::setupInput(){
 void ofApp::update(){
     if (state == State::InLimbo){
         if (input->isReady()){
+            fadeFinished = ofGetElapsedTimef() + FadeDurationSeconds;
+            state = State::LimboToUtero;
+        }
+    } else if (state == State::LimboToUtero){
+        if (ofGetElapsedTimef() > fadeFinished){
             state = State::InUtero;
         }
     } else if (state == State::InUtero) {
-        if (progress < InAlveoProgress){
+        if (progress < ProgressInAlveo){
             state = State::InAlveo;
         }
         updateNavigation();
     } else if (state == State::InAlveo){
-        if (progress < InAereProgress){
+        if (progress < ProgressInAere){
             state = State::InAere;
+            fadeFinished = ofGetElapsedTimef() + FirstSoundsDurationSeconds;
             firstSounds.play();
+            babyBeats.stop();
+            underwater.stop();
         } else {
             updateNavigation();
+        }
+    } else if (state == State::InAere){
+        if (ofGetElapsedTimef() < fadeFinished){
+            progress -= 3.f;
+        } else if (ofGetElapsedTimef() >= fadeFinished){
+            state = State::LimboToUtero;
+            fadeFinished = ofGetElapsedTimef() + FadeDurationSeconds;
+            progress = ProgressInUtero;
+            babyBeats.play();
+            underwater.play();
         }
     }
 
@@ -110,26 +126,36 @@ void ofApp::draw(){
     ofPushStyle();
 
     cam.begin();
-    ofSetColor(255.f, ofMap(progress, -600.f, InAereProgress, 255.f, 0.f, true));
+    
+    ofSetColor(255.f, ofMap(progress, -600.f, ProgressInAere, 255.f, 0.f, true));
     birthCanalImage.getTexture().bind();
     birthCanal.draw();
     birthCanalImage.getTexture().unbind();
     wombImage.getTexture().bind();
     wombSurface.drawFaces();
     wombImage.getTexture().unbind();
-    ofSetColor(255.f, 255.f, 200.f, 150.f);
     
-    if (progress > 0.f){
+    if (state == State::InLimbo || state == State::LimboToUtero || state == State::InUtero){
+        ofSetColor(255.f, 255.f, 200.f, 150.f);
         agents.draw();
     }
 
-    float alpha = ofMap(progress, 0.f, InAereProgress, 0.f, 255.f, true);
+    float alpha = ofMap(progress, 0.f, ProgressInAere, 0.f, 255.f, true);
     alpha += sin(ofGetElapsedTimef()*10)*10.f;
     ofSetColor(222.f, 94.f, 107.f, alpha);
     vaginaAgents.draw();
     cam.end();
     
-    ofSetColor(255.f, rhythms.getRhythmLevel() * VisualFeedbackScaling);
+    if (state == State::InLimbo){
+        ofSetColor(255.f);
+    } else if (state == State::LimboToUtero){
+        ofSetColor(255.f, ofMap(fadeFinished-ofGetElapsedTimef(), FadeDurationSeconds, 0.f, 255.f, 0.f, true));
+    } else if (state == State::InUtero || state == State::InAlveo){
+        ofSetColor(255.f, rhythms.getRhythmLevel() * VisualFeedbackScaling);
+    } else if (state == State::InAere){
+        ofSetColor(255.f, ofMap(fadeFinished-ofGetElapsedTimef(), FadeDurationSeconds, 0.f, 0.f, 255.f, true));
+    }
+    
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
     ofSetColor(0, 0, 0);
@@ -144,9 +170,15 @@ void ofApp::draw(){
     } else if (state == State::InAlveo){
         text = "In Alveo";
     } else if (state == State::InAere){
-        text = "In Aere";
+        if (ofGetElapsedTimef() > fadeFinished){
+            text = "Born";
+        } else {
+            text = "In Aere";
+        }
     }
     ofDrawBitmapString(text, 20, 80);
+    ofDrawBitmapString(ofGetElapsedTimef(), 160, 20);
+    ofDrawBitmapString(fadeFinished, 160, 40);
     ofPopStyle();
 }
 
