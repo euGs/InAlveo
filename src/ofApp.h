@@ -34,7 +34,7 @@ public:
 protected:
     const float SpeedScaling = 5.f;
     const float VisualFeedbackScaling = 255.f;   // For flashing the screen when pad is hit.
-    const int MaxAgents = 200;
+    const int MaxAgents = 100;
     const float BirthCanalZ = -501;
     const float AgentsRadiusScaling = 1.7f;  // The radius of the sphere occupied by agents.
     const int NumPads = 2;
@@ -45,7 +45,7 @@ protected:
 
     enum class InputType { Arduino, Audio };
     
-    ofCamera cam;
+    ofEasyCam cam;
     ofSoundPlayer babyBeats, mamaBeats, underwater;
     ofSoundStream soundStream;
     shared_ptr<AudioInput> audioInput;
@@ -61,7 +61,9 @@ protected:
     ofPlanePrimitive wombSurface;
     ofCylinderPrimitive birthCanal;
     
-    Agents agents;
+    ofPlanePrimitive vaginaAgentsPlane;
+    Agents agents, vaginaAgents;
+    MeshRovingAgentSource vaginaAgentsSource;
     SphereRovingAgentSource agentSource;
     CrumpledPaperVisualisationSource visualisationSource;
 };

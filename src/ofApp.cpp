@@ -15,7 +15,7 @@ void ofApp::setup(){
     underwater.load("Underwater.wav");
     underwater.setLoop(true);
     
-    inputType = InputType::Arduino;
+    inputType = InputType::Audio;
     shared_ptr<InputDevice> input = setupInput();
 
     rhythms.setup(input, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
@@ -31,12 +31,19 @@ void ofApp::setup(){
     birthCanal.setOrientation({90.f, 0.f, 2.5f});
     birthCanal.setResolutionRadius(50);
     birthCanal.mapTexCoordsFromTexture(birthCanalImage.getTexture());
+    birthCanal.disableNormals();
     
     visualisationSource.setImageFilename("SoftCircle.png");
     visualisationSource.setPlaneResolution(4);
     visualisationSource.setup();
     agentSource.setup();
     agents.setup(agentSource, visualisationSource, MaxAgents);
+
+    vaginaAgentsPlane.set(300, 600, 10, 10);
+    vaginaAgentsSource.setup();
+    vaginaAgentsSource.setMesh(make_shared<ofMesh>(vaginaAgentsPlane.getMesh()));
+    vaginaAgentsSource.moveMesh({0.f, 0.f, -950.f});
+    vaginaAgents.setup(vaginaAgentsSource, visualisationSource, MaxAgents);
     
     progress = 600.f;
     speed = 0.f;
@@ -69,6 +76,7 @@ void ofApp::update(){
         mamaBeats.play();
     }
     agents.update(AgentsRadiusScaling);
+    vaginaAgents.update(AgentsRadiusScaling);
     
     cam.setPosition(0.f, 0.f, progress);
 }
@@ -76,33 +84,38 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(255.f);
-    
+    ofPushStyle();
+
     cam.begin();
+    ofSetColor(255.f, ofMap(progress, -600.f, -800.f, 255.f, 0.f, true));
     birthCanalImage.getTexture().bind();
     birthCanal.draw();
     birthCanalImage.getTexture().unbind();
     wombImage.getTexture().bind();
     wombSurface.drawFaces();
     wombImage.getTexture().unbind();
-    ofPushStyle();
     ofSetColor(255.f, 255.f, 200.f, 150.f);
-    agents.draw();
-    ofPopStyle();
+    if (progress > 0.f){
+        agents.draw();
+    }
+
+    float alpha = ofMap(progress, 0.f, -800.f, 0.f, 255.f, true);
+    alpha += sin(ofGetElapsedTimef()*10)*10.f;
+    ofSetColor(222.f, 94.f, 107.f, alpha);
+    vaginaAgents.draw();
     cam.end();
     
-    ofPushStyle();
     ofSetColor(255.f, rhythms.getRhythmLevel() * VisualFeedbackScaling);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-    ofPopStyle();
     
     if (rhythms.wasHit()){
         mamaBeats.play();
     }
     
-    ofPushStyle();
     ofSetColor(0, 0, 0);
     ofDrawBitmapString(ofGetFrameRate(), 20, 20);
     ofDrawBitmapString(rhythms.getRhythmLevel(), 20, 40);
+    ofDrawBitmapString(sin(ofGetElapsedTimef()*10), 20, 60);
     ofPopStyle();
 }
 
@@ -115,7 +128,7 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    mamaBeats.play();
+
 }
 
 //--------------------------------------------------------------
