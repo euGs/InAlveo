@@ -46,7 +46,7 @@ void ofApp::setup(){
     vaginaAgentsSource.moveMesh({0.f, 0.f, -950.f});
     vaginaAgents.setup(vaginaAgentsSource, visualisationSource, MaxAgents);
     
-    progress = 600.f;
+    progress = InUteroProgress;
     speed = 0.f;
     
     babyBeats.play();
@@ -76,14 +76,16 @@ void ofApp::update(){
             state = State::InUtero;
         }
     } else if (state == State::InUtero) {
-        if (progress < 0.f){
+        if (progress < InAlveoProgress){
             state = State::InAlveo;
         }
-        progress -= rhythms.getRhythmLevel() * SpeedScaling;
+        updateNavigation();
     } else if (state == State::InAlveo){
-        progress -= rhythms.getRhythmLevel() * SpeedScaling;
-        if (progress < -800.f){
+        if (progress < InAereProgress){
             state = State::InAere;
+            firstSounds.play();
+        } else {
+            updateNavigation();
         }
     }
 
@@ -92,7 +94,11 @@ void ofApp::update(){
     vaginaAgents.update(AgentsRadiusScaling);
     
     cam.setPosition(0.f, 0.f, progress);
-    
+}
+
+//--------------------------------------------------------------
+void ofApp::updateNavigation(){
+    progress -= rhythms.getRhythmLevel() * SpeedScaling;
     if (rhythms.wasHit()){
         mamaBeats.play();
     }
@@ -104,7 +110,7 @@ void ofApp::draw(){
     ofPushStyle();
 
     cam.begin();
-    ofSetColor(255.f, ofMap(progress, -600.f, -800.f, 255.f, 0.f, true));
+    ofSetColor(255.f, ofMap(progress, -600.f, InAereProgress, 255.f, 0.f, true));
     birthCanalImage.getTexture().bind();
     birthCanal.draw();
     birthCanalImage.getTexture().unbind();
@@ -117,7 +123,7 @@ void ofApp::draw(){
         agents.draw();
     }
 
-    float alpha = ofMap(progress, 0.f, -800.f, 0.f, 255.f, true);
+    float alpha = ofMap(progress, 0.f, InAereProgress, 0.f, 255.f, true);
     alpha += sin(ofGetElapsedTimef()*10)*10.f;
     ofSetColor(222.f, 94.f, 107.f, alpha);
     vaginaAgents.draw();

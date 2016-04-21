@@ -16,6 +16,7 @@ public:
     void setup();
     shared_ptr<InputDevice> setupInput();
     void update();
+    void updateNavigation();
     void draw();
     void audioIn(float * input, int bufferSize, int nChannels);
     
@@ -42,7 +43,9 @@ protected:
     const float HitThreshold = .08f;
     const float HitHoldSeconds = .2f;
     const float AudioMaxInput = 1.f;
-    const float BornZ = -800.f;
+    const float InUteroProgress = 600.f;
+    const float InAlveoProgress = 0.f;
+    const float InAereProgress = -800.f;
 
     enum class InputType { Arduino, Audio };
     enum class State { InLimbo, InUtero, InAlveo, InAere };
