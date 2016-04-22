@@ -26,7 +26,7 @@ void ofApp::setup(){
     wombSurface.setOrientation({180.f, 0.f, 0.f});
     wombSurface.mapTexCoordsFromTexture(wombImage.getTexture());
     
-    birthCanalImage.load("birthCanal.png");
+    birthCanalImage.load("birthCanalHiRes.png");
     birthCanal.set(250, 1000);
     birthCanal.setPosition(0, 0, BirthCanalZ);
     birthCanal.setOrientation({90.f, 0.f, 2.5f});
