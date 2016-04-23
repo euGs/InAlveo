@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAssimpModelLoader.h"
-#include "Sound.h"
 #include "Rhythms.h"
 #include "Agents.h"
 #include "AgentSource.h"
@@ -62,7 +60,6 @@ protected:
     shared_ptr<InputDevice> input;
     InputType inputType;
     
-    Sound sound;
     Rhythms rhythms;
     float progress;
     float fadeFinished;

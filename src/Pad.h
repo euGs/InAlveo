@@ -19,6 +19,7 @@ public:
         this->hitHoldSeconds = hitHoldSeconds;
         smoothedValue = 0.f;
         rawValue = 0.f;
+        lastHitTime = 0.f;
     }
     
     bool wasHit(){

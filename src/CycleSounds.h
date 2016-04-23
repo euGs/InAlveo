@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class Sound {
+class CycleSounds {
 public:
     void setup(string musicFile){
         soundPlayer.load(musicFile);

@@ -8,6 +8,7 @@
 void ofApp::setup(){
     cam.setNearClip(0.1f);
     ofEnableDepthTest();
+    ofSetFullscreen(true);
     
     babyBeats.load("BabyBeats.wav");
     babyBeats.setLoop(true);
@@ -16,7 +17,7 @@ void ofApp::setup(){
     underwater.setLoop(true);
     firstSounds.load("FirstSounds.wav");
     
-    inputType = InputType::Arduino;
+    inputType = InputType::Audio;
     input = setupInput();
 
     rhythms.setup(input, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);
@@ -57,7 +58,7 @@ void ofApp::setup(){
 shared_ptr<InputDevice> ofApp::setupInput(){
     if (inputType == InputType::Arduino){
         arduinoInput = make_shared<ArduinoInput>();
-        arduinoInput->setup(1023.f, "/dev/tty.usbmodemfa131", 57600);
+        arduinoInput->setup(1023.f, "/dev/tty.usbmodemfd121", 57600);
         return arduinoInput;
     } else if (inputType == InputType::Audio){
         soundStream.setup(this, 0, 2, 44100, 256, 4);
@@ -158,27 +159,27 @@ void ofApp::draw(){
     
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
-    ofSetColor(0, 0, 0);
-    ofDrawBitmapString(ofGetFrameRate(), 20, 20);
-    ofDrawBitmapString(rhythms.getRhythmLevel(), 20, 40);
-    ofDrawBitmapString(progress, 20, 60);
-    string text;
-    if (state == State::InLimbo){
-        text = "In Limbo";
-    } else if (state == State::InUtero){
-        text = "In Utero";
-    } else if (state == State::InAlveo){
-        text = "In Alveo";
-    } else if (state == State::InAere){
-        if (ofGetElapsedTimef() > fadeFinished){
-            text = "Born";
-        } else {
-            text = "In Aere";
-        }
-    }
-    ofDrawBitmapString(text, 20, 80);
-    ofDrawBitmapString(ofGetElapsedTimef(), 160, 20);
-    ofDrawBitmapString(fadeFinished, 160, 40);
+//    ofSetColor(0, 0, 0);
+//    ofDrawBitmapString(ofGetFrameRate(), 20, 20);
+//    ofDrawBitmapString(rhythms.getRhythmLevel(), 20, 40);
+//    ofDrawBitmapString(progress, 20, 60);
+//    string text;
+//    if (state == State::InLimbo){
+//        text = "In Limbo";
+//    } else if (state == State::InUtero){
+//        text = "In Utero";
+//    } else if (state == State::InAlveo){
+//        text = "In Alveo";
+//    } else if (state == State::InAere){
+//        if (ofGetElapsedTimef() > fadeFinished){
+//            text = "Born";
+//        } else {
+//            text = "In Aere";
+//        }
+//    }
+//    ofDrawBitmapString(text, 20, 80);
+//    ofDrawBitmapString(ofGetElapsedTimef(), 160, 20);
+//    ofDrawBitmapString(fadeFinished, 160, 40);
     ofPopStyle();
 }
 
@@ -191,7 +192,6 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    progress -= 20;
 }
 
 //--------------------------------------------------------------
