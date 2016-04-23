@@ -7,6 +7,7 @@
 #include "VisualisationSource.h"
 #include "AudioInput.h"
 #include "ArduinoInput.h"
+#include "CycleSound.h"
 
 class ofApp : public ofBaseApp{
     
@@ -54,6 +55,7 @@ protected:
     State state;
     ofEasyCam cam;
     ofSoundPlayer babyBeats, mamaBeats, underwater, firstSounds;
+    CycleSound cycleMamaBeats;
     ofSoundStream soundStream;
     shared_ptr<AudioInput> audioInput;
     shared_ptr<ArduinoInput> arduinoInput;

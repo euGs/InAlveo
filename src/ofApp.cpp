@@ -12,6 +12,8 @@ void ofApp::setup(){
     
     babyBeats.load("BabyBeats.wav");
     babyBeats.setLoop(true);
+    vector<string> mamaBeatsFiles = { "MamaBeat01.wav", "MamaBeat02.wav", "MamaBeat01.wav", "MamaBeat02.wav" };
+    cycleMamaBeats.setup(mamaBeatsFiles);
     mamaBeats.load("MamaBeats.wav");
     underwater.load("Underwater.wav");
     underwater.setLoop(true);
@@ -117,7 +119,7 @@ void ofApp::update(){
 void ofApp::updateNavigation(){
     progress -= rhythms.getRhythmLevel() * SpeedScaling;
     if (rhythms.wasHit()){
-        mamaBeats.play();
+        cycleMamaBeats.play();
     }
 }
 
