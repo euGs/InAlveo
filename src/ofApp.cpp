@@ -19,7 +19,7 @@ void ofApp::setup(){
     underwater.setLoop(true);
     firstSounds.load("FirstSounds.wav");
     
-    inputType = InputType::Audio;
+    inputType = InputType::Arduino;
     input = setupInput();
 
     rhythms.setup(input, NumPads, PadSmoothing, HitThreshold, HitHoldSeconds);

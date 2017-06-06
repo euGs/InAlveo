@@ -42,7 +42,7 @@ protected:
     const float HitThreshold = .08f;
     const float HitHoldSeconds = .2f;
     const float AudioMaxInput = 1.f;
-    const float ProgressInUtero = 600.f;
+    const float ProgressInUtero = 555.f;
     const float ProgressInAlveo = 0.f;
     const float ProgressInAere = -800.f;
     const float ProgressFadeBirthCanal = -400.f;
