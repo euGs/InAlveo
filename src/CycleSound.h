@@ -5,7 +5,7 @@
 class CycleSound {
 public:
     void setup(vector<string> musicFiles){
-        for (musicFile : musicFiles){
+        for (auto &&musicFile : musicFiles){
             ofSoundPlayer soundPlayer;
             soundPlayer.load(musicFile);
             soundPlayers.emplace_back(soundPlayer);
